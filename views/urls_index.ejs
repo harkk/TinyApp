@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -9,8 +10,13 @@
 </head>
 <body style="font-size:20px; padding:50px;">
     <!-- Add EJS code here -->
-  <h1><b><u>'List of URL's</u></b></h1>
-    <li>"b2xVn2": "http://www.lighthouselabs.ca"</li>
-    <li>"9sm5xK": "http://www.google.com"</li>
+    <h1><b><u>List of URL's</u></b></h1>
+      <ul>
+      <% for(var url in urls) { %>
+        <li><%= url + ': ' + urls[url] %></li>
+      <% } %>
+    </ul>
+
+    <p href = '#'>Shorten a URL</p>
 </body>
 </html>
