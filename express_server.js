@@ -11,10 +11,16 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-// added below code as route at step 2, if we go to http://localhost:8080
+// step 2. added below code as route if we go to http://localhost:8080/
 // urls.json it will resolve and give us the urlDatabase
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
+});
+
+// step 3. response now resolves this HTML when we go to
+// http://localhost:8080/hello
+app.get("/hello", (req, res) => {
+  res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
 app.listen(PORT, () => {
