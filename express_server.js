@@ -33,6 +33,13 @@ app.get("/urls", (req, res) => {
   res.render('urls_index', templateVars);
 });
 
+// step 5. add second route and template
+app.get("/urls/:shortURL", (req, res) => {
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  console.log(templateVars);
+  res.render("urls_show", templateVars);
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
