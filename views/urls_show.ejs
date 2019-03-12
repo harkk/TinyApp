@@ -9,8 +9,11 @@
 </head>
 <body style="font-size:20px; padding:50px;">
     <!-- Add EJS code here -->
-  <h1><b>TinyApp</b></h1>
-    <p href = '#'>Shorten a URL</p>
+  <header>
+    <% include ./partials/_header %>
+  </header>
+    <h1><b>TinyApp</b></h1>
+    <a href = "#">Create New TinyURL</a>
     <li><%= `Long URL: ${longURL}, short URL: ${shortURL}` %></li>
 
 
