@@ -1,6 +1,10 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
+const bodyParser = require("body-parser");
+
+// before all routes because?
+app.use(bodyParser.urlencoded({extended: true}));
 
 // this tells express to use EJS as templating engine, needs app
 // declaration above
