@@ -3,17 +3,6 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 
-// step 8. add generateRandomString() function
-function generateRandomString() {
-  var randomStr = "";
-  var allChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
-
-  for (var i = 0; i < 6, i++;)
-    randomStr += allChars.charAt(Math.floor(Math.random() * allChars.length));
-
-  return randomStr;
-}
-
 // before all routes because?
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -62,10 +51,15 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //step 7. add post route to receive form submission
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  console.log(req.body.longURL);  // Log the POST request body to the console
+  res.send(generateRandomString());         // Respond with 'Ok' (we will replace this)
 });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+// step 8. add generateRandomString() function
+function generateRandomString() {
+  return Math.random().toString(36).substring(2, 8);
+}
