@@ -2,13 +2,18 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
 // before all routes because?
 app.use(bodyParser.urlencoded({extended: true}));
 
+// set up for cookieParser
+app.use(cookieParser());
+
 // this tells express to use EJS as templating engine, needs app
 // declaration above
 app.set("view engine", "ejs");
+
 
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
