@@ -15,6 +15,7 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
+
 // step 2. added below code as route if we go to http://localhost:8080/
 // urls.json it will resolve and give us the urlDatabase
 app.get("/urls.json", (req, res) => {
@@ -33,11 +34,18 @@ app.get("/urls", (req, res) => {
   res.render('urls_index', templateVars);
 });
 
+// step 6. add a new route for /urls/new
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new")
+})
+
 // step 5. add second route and template
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
 });
+
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
