@@ -51,8 +51,11 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //step 7. add post route to receive form submission
 app.post("/urls", (req, res) => {
-  console.log(req.body.longURL);  // Log the POST request body to the console
-  res.send(generateRandomString());         // Respond with 'Ok' (we will replace this)
+  // console.log(req.body.longURL);  // Log the POST request body to the console
+  let shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+  res.redirect(`http://localhost:8080/urls/${shortURL}`)
+  //res.send(generateRandomString());         // Respond with 'Ok' (we will replace this)
 });
 
 app.listen(PORT, () => {
