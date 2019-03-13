@@ -20,36 +20,42 @@ app.get("/", (req, res) => {
 });
 
 
-// step 2. added below code as route if we go to http://localhost:8080/
+// added below code as route if we go to http://localhost:8080/
 // urls.json it will resolve and give us the urlDatabase
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-// step 3. response now resolves this HTML when we go to
+// response now resolves this HTML when we go to
 // http://localhost:8080/hello
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-// step 4. add route for /urls
+// add route for /urls
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render('urls_index', templateVars);
 });
 
-// step 6. add a new route for /urls/new
+// add a new route for /urls/new
 app.get("/urls/new", (req, res) => {
   res.render("urls_new")
 })
 
-// step 5. add second route and template
+// add second route and template
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
 });
 
-//step 7. add post route to receive form submission
+// this will take any request to /u/:shortURL and redirect to longURL
+app.get("/u/:shortURL", (req, res) => {
+  let longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
+});
+
+// add post route to receive form submission
 app.post("/urls", (req, res) => {
   // console.log(req.body.longURL);  // Log the POST request body to the console
   let shortURL = generateRandomString();
@@ -58,11 +64,13 @@ app.post("/urls", (req, res) => {
   //res.send(generateRandomString());         // Respond with 'Ok' (we will replace this)
 });
 
+//
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-// step 8. add generateRandomString() function
+// add generateRandomString() function
 function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 }
