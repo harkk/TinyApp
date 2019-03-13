@@ -76,7 +76,7 @@ app.post("/urls/:shortURL/update", (req, res) => {
  //console.log(req.body.longURL);
  let shortURL = req.params.shortURL;
  urlDatabase[shortURL] = req.body.longURL;
- res.redirect('/urls');
+ res.redirect(`/urls/${shortURL}`);
 })
 
 
