@@ -15,12 +15,12 @@
 
   <h1><b>TinyApp</b></h1>
     <a href = "#">Create New TinyURL</a>
-    <table>
+    <table class="table">
     <% for(let url in urls) { %>
       <tr>
         <td><%=`${url}: ` + urls[url] %></td>
         <td><form method="POST" class="inline-form" action=<%="/urls/${url}/delete"%>>
-        <button>Delete</button>
+        <button class="btn btn-danger">Delete</button>
         </form></td>
       </tr>
     <% } %>
