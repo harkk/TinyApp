@@ -58,10 +58,17 @@ app.get("/u/:shortURL", (req, res) => {
 // add post route to receive form submission
 app.post("/urls", (req, res) => {
   // console.log(req.body.longURL);  // Log the POST request body to the console
-  let shortURL = generateRandomString();
+  const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
-  res.redirect(`http://localhost:8080/urls/${shortURL}`)
+  res.redirect(`/urls/${shortURL}`)
   //res.send(generateRandomString());         // Respond with 'Ok' (we will replace this)
+});
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  let shortURL = req.params.shortURL;
+  delete urlDatabase[shortURL];
+  console.log("****", shortURL);
+  res.redirect("/urls");
 });
 
 //
