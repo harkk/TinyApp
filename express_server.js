@@ -63,10 +63,10 @@ app.get("/u/:shortURL", (req, res) => {
 // add post route to receive form submission
 app.post("/urls", (req, res) => {
   // console.log(req.body.longURL);  // Log the POST request body to the console
-  const shortURL = generateRandomString();
+  const randomStr = generateRandomString();
   //console.log(req.body.longURL) ---> the url we entered
-  urlDatabase[shortURL] = req.body.longURL;
-  res.redirect(`/urls/${shortURL}`)
+  urlDatabase[randomStr] = req.body.longURL;
+  res.redirect(`/urls/${randomStr}`)
   //res.send(generateRandomString());         // Respond with 'Ok' (we will replace this)
 });
 
@@ -83,6 +83,12 @@ app.post("/urls/:shortURL/update", (req, res) => {
  urlDatabase[shortURL] = req.body.longURL;
  res.redirect(`/urls/${shortURL}`);
 })
+
+app.post("/login", (req, res) => {
+  res.cookie("username", req.params);
+  res.redirect("/urls");
+});
+
 
 
 app.listen(PORT, () => {
