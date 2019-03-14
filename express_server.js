@@ -39,18 +39,27 @@ app.get("/hello", (req, res) => {
 
 // add route for /urls
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase };
   res.render('urls_index', templateVars);
 });
 
 // add a new route for /urls/new
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new")
+  let templateVars = {
+    username: req.cookies["username"]
+  };
+  res.render("urls_new", templateVars)
 })
 
 // add second route and template
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  let templateVars = {
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL],
+    username: req.cookies["username"]
+  };
   res.render("urls_show", templateVars);
 });
 
@@ -85,7 +94,7 @@ app.post("/urls/:shortURL/update", (req, res) => {
 })
 
 app.post("/login", (req, res) => {
-  res.cookie("username", req.params);
+  res.cookie("username", req.body.username);
   res.redirect("/urls");
 });
 
