@@ -15,10 +15,25 @@ app.use(cookieParser());
 app.set("view engine", "ejs");
 
 
-var urlDatabase = {
+const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+const users = {
+
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+}
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -107,6 +122,11 @@ app.get("/register", (req, res) => {
   res.render('urls_register');
 });
 
+app.post("/register", (req, res) => {
+  const {email, password} = req.body;
+  usersID = generateRandomString();
+  users[usersID] = {id: usersID, email: email, password: password};
+})
 
 
 app.listen(PORT, () => {
