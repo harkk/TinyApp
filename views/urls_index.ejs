@@ -17,14 +17,24 @@
   <h2>My URL's</h2>
     <a href = "#">Create New TinyURL</a>
     <table class ="table">
+    <thead>
+      <td><b>TinyURL</b></td>
+      <td><b>URL</b></td>
+      <td> </td>
+      <td> </td>
+    </thead>
+    <tbody>
     <% for(let url in urls) { %>
       <tr>
-        <td><%=`${url}: ` + urls[url] %></td>
+        <td><%=`${url}:`%></td>
+        <td><%=urls[url] %></td>
+        <td><a href="/urls/<%= url %>">Edit</a>
         <td><form method="POST" class="inline-form"  action=<%=`/urls/${url}/delete`%>>
         <button class="btn btn-danger">Delete</button>
         </form></td>
       </tr>
     <% } %>
+  </tbody>
   </table>
 
 </body>
