@@ -63,15 +63,24 @@ app.get("/hello", (req, res) => {
 // add route for /urls
 app.get("/urls", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"],
+    user: users[req.cookies.user_ID],
     urls: urlDatabase };
   res.render('urls_index', templateVars);
+});
+
+//route for login form
+app.get("/login", (req, res) => {
+  let templateVars = {
+    urls: urlDatabase,
+    user: users[req.cookies.user_ID]};
+  res.render("urls_login", templateVars);
 });
 
 // add a new route for /urls/new
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"]
+    urls: urlDatabase,
+    user: users[req.cookies.user_ID]
   };
   res.render("urls_new", templateVars)
 })
@@ -81,7 +90,7 @@ app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies["username"]
+    user: users[req.cookies.user_ID]
   };
   res.render("urls_show", templateVars);
 });
@@ -117,42 +126,46 @@ app.post("/urls/:shortURL/update", (req, res) => {
 })
 
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
+  for (userID in users) {
+    if (users[userID].email && users[userID].email == req.body.email) {
+      if (req.body.password == users[userID].password){
+      res.cookie('user_ID', userID);
+      } else {
+      res.status(403).redirect('/login');
+      }
+    }
+   }
   res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_ID");
   res.redirect("urls");
 });
 
 // getting the register info
 app.get("/register", (req, res) => {
-  let templateVars = {user: users[req.cookies.user_id]}
+  let templateVars = {
+    urls: urlDatabase,
+    user: users[req.cookies.user_id]}
   res.render('urls_register', templateVars);
 });
 
 // post register info
 app.post("/register", (req, res) => {
-  let id = generateRandomString();
-  let email = req.body.email;
-  let password = req.body.password;
-  if(emailCheck(email)){
-    res.status(400);
-    res.send('Error: The email address is already in use.');
-  } else if (email.length === 0 || password.length === 0) {
-    res.status(400).send("Invalid email or password");
+  const {email, password} = req.body;
+  if (email.length === 0 || password.length === 0 || emailCheck(email)) {
+    res.sendStatus(400);
   } else {
-  //add user
-    users[id] = {
-    id: id,
-    email: email,
-    password: password
+    user_ID = generateRandomString()
+    users[user_ID] = {
+      id: user_ID,
+      email: email,
+      password: password
+    };
+    res.cookie("user_ID", user_ID);
+    res.redirect("/urls");
   }
-  res.cookie("user_id", id);
-  console.log(users);
-  res.redirect("/urls");
-}
 })
 
 
