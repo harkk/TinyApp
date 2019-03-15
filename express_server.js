@@ -76,7 +76,7 @@ app.post("/urls", (req, res) => {
   //console.log(req.body.longURL) ---> the url we entered
   urlDatabase[randomStr] = req.body.longURL;
   res.redirect(`/urls/${randomStr}`)
-  //res.send(generateRandomString());         // Respond with 'Ok' (we will replace this)
+  //res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
