@@ -118,14 +118,27 @@ app.post("/logout", (req, res) => {
   res.redirect("urls");
 });
 
+// getting the register info
 app.get("/register", (req, res) => {
-  res.render('urls_register');
+  let templateVars = {user: users[req.cookies.user_id]}
+  res.render('urls_register', templateVars);
 });
 
+// post register info
 app.post("/register", (req, res) => {
-  const {email, password} = req.body;
-  usersID = generateRandomString();
-  users[usersID] = {id: usersID, email: email, password: password};
+  let id = generateRandomString();
+  let email = req.body.email;
+  let password = req.body.password;
+
+  //add user
+  users[id] = {
+    id,
+    email,
+    password
+  }
+  res.cookie("user_id", id);
+  console.log(users);
+  res.redirect("/urls");
 })
 
 
