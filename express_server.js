@@ -16,9 +16,15 @@ app.set("view engine", "ejs");
 
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-};
+  "b2xVn2": {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "aj48lW",
+  },
+  "9sm5xK": {
+    longURL:"http://www.google.com",
+    userID: "aJ49jW"
+  },
+}
 
 const users = {
 
@@ -94,7 +100,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[req.cookies.user_ID]
   };
   res.render("urls_show", templateVars);
@@ -102,16 +108,18 @@ app.get("/urls/:shortURL", (req, res) => {
 
 // this will take any request to /u/:shortURL and redirect to longURL
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
+  let longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
 // add post route to receive form submission
 app.post("/urls", (req, res) => {
   // console.log(req.body.longURL);  // Log the POST request body to the console
+  let longURL = req.body.longURL;
+  let user_id = req.cookies["user_id"];
   const randomStr = generateRandomString();
   //console.log(req.body.longURL) ---> the url we entered
-  urlDatabase[randomStr] = req.body.longURL;
+  urlDatabase[randomStr] = {'longURL': longURL, 'userID': user_id};
   res.redirect(`/urls/${randomStr}`)
   //res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
