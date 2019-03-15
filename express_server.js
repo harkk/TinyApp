@@ -70,7 +70,8 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     user: users[req.cookies.user_ID],
-    urls: urlDatabase };
+    urls: urlDatabase,
+    user_id: req.cookies["user_id"] };
   res.render('urls_index', templateVars);
 });
 
@@ -85,16 +86,16 @@ app.get("/login", (req, res) => {
 
 // add a new route for /urls/new
 app.get("/urls/new", (req, res) => {
-  let user_id = req.cookies["user_id"]
-  let templateVars = {
-    user: users[user_ID]
-  };
-  if (!user_ID) {
-    res.redirect("/login")
-  } else {
+  user = users[req.cookies.user_ID]
+  let templateVars = { user: user };
+  if(users[req.cookies.user_ID]){
     res.render("urls_new", templateVars);
+  } else {
+    res.redirect("/login");
   }
-})
+  console.log(user["id"]);
+  console.log(templateVars);
+});
 
 // add second route and template
 app.get("/urls/:shortURL", (req, res) => {
@@ -119,6 +120,7 @@ app.post("/urls", (req, res) => {
   //console.log(req.body.longURL) ---> the url we entered
   urlDatabase[randomStr] = req.body.longURL;
   res.redirect(`/urls/${randomStr}`)
+  console.log(urlDatabase);
   //res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
@@ -147,6 +149,7 @@ app.post("/login", (req, res) => {
     }
    }
   res.redirect("/urls");
+  console.log(users);
 });
 
 app.post("/logout", (req, res) => {
