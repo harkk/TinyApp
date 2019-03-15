@@ -74,15 +74,20 @@ app.get("/login", (req, res) => {
     urls: urlDatabase,
     user: users[req.cookies.user_ID]};
   res.render("urls_login", templateVars);
+
 });
 
 // add a new route for /urls/new
 app.get("/urls/new", (req, res) => {
+  let user_id = req.cookies["user_id"]
   let templateVars = {
-    urls: urlDatabase,
-    user: users[req.cookies.user_ID]
+    user: users[user_ID]
   };
-  res.render("urls_new", templateVars)
+  if (!user_ID) {
+    res.redirect("/login")
+  } else {
+    res.render("urls_new", templateVars);
+  }
 })
 
 // add second route and template
