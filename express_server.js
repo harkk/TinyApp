@@ -35,6 +35,14 @@ const users = {
   }
 }
 
+function emailCheck(input){
+  for(id in users){
+  if(users[id]['email'] === input){
+    return true;
+    }
+  } return false;
+}
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -129,16 +137,22 @@ app.post("/register", (req, res) => {
   let id = generateRandomString();
   let email = req.body.email;
   let password = req.body.password;
-
+  if(emailCheck(email)){
+    res.status(400);
+    res.send('Error: The email address is already in use.');
+  } else if (email.length === 0 || password.length === 0) {
+    res.status(400).send("Invalid email or password");
+  } else {
   //add user
-  users[id] = {
-    id,
-    email,
-    password
+    users[id] = {
+    id: id,
+    email: email,
+    password: password
   }
   res.cookie("user_id", id);
   console.log(users);
   res.redirect("/urls");
+}
 })
 
 
