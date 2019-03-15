@@ -100,7 +100,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
+    longURL: urlDatabase[req.params.shortURL],
     user: users[req.cookies.user_ID]
   };
   res.render("urls_show", templateVars);
@@ -108,18 +108,16 @@ app.get("/urls/:shortURL", (req, res) => {
 
 // this will take any request to /u/:shortURL and redirect to longURL
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL].longURL;
+  let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
 
 // add post route to receive form submission
 app.post("/urls", (req, res) => {
   // console.log(req.body.longURL);  // Log the POST request body to the console
-  let longURL = req.body.longURL;
-  let user_id = req.cookies["user_id"];
   const randomStr = generateRandomString();
   //console.log(req.body.longURL) ---> the url we entered
-  urlDatabase[randomStr] = {'longURL': longURL, 'userID': user_id};
+  urlDatabase[randomStr] = req.body.longURL;
   res.redirect(`/urls/${randomStr}`)
   //res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
