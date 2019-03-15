@@ -16,15 +16,9 @@ app.set("view engine", "ejs");
 
 
 const urlDatabase = {
-  "b2xVn2": {
-    longURL: "http://www.lighthouselabs.ca",
-    userID: "aj48lW",
-  },
-  "9sm5xK": {
-    longURL:"http://www.google.com",
-    userID: "aJ49jW"
-  },
-}
+  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "aj48lW" },
+  "9sm5xK": { longURL:"http://www.google.com", userID: "aJ49jW" }
+};
 
 const users = {
 
@@ -93,8 +87,6 @@ app.get("/urls/new", (req, res) => {
   } else {
     res.redirect("/login");
   }
-  console.log(user["id"]);
-  console.log(templateVars);
 });
 
 // add second route and template
@@ -118,9 +110,9 @@ app.post("/urls", (req, res) => {
   // console.log(req.body.longURL);  // Log the POST request body to the console
   const randomStr = generateRandomString();
   //console.log(req.body.longURL) ---> the url we entered
-  urlDatabase[randomStr] = req.body.longURL;
+  urlDatabase[randomStr] = { longURL: req.body.longURL, user_id: req.cookies.user_ID };
   res.redirect(`/urls/${randomStr}`)
-  console.log(urlDatabase);
+  //console.log(urlDatabase); returns urlDatabase with added url
   //res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
@@ -149,7 +141,7 @@ app.post("/login", (req, res) => {
     }
    }
   res.redirect("/urls");
-  console.log(users);
+
 });
 
 app.post("/logout", (req, res) => {
@@ -180,6 +172,7 @@ app.post("/register", (req, res) => {
     res.cookie("user_ID", user_ID);
     res.redirect("/urls");
   }
+  // console.log(users) --- should show database of users with new user added to it. it does.
 })
 
 
