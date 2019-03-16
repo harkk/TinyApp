@@ -12,12 +12,12 @@
     <header>
       <% include ./partials/_header %>
     </header>
-    <h4>TinyURL for <%= longURL%></h4>
+    <h4>TinyURL for <%= shortURL%></h4>
     <li><%= `${shortURL}` %></li>
     <form action="/urls/<%=shortURL%>" method="POST">
       <input type="text" name="longURL" value="<%= longURL%>" placeholder="<%= longURL %>"
         style="width:500px; margin: 1em">
-      <button type="button" class="btn btn-primary">Update</button>
+      <button type="submit" class="btn btn-primary">Update</button>
     </form>
 
 

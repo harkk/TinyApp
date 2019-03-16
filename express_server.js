@@ -110,8 +110,9 @@ app.get("/urls/new", (req, res) => {
 
 // add second route and template
 app.get("/urls/:shortURL", (req, res) => {
+  let shortURL = req.params.shortURL;
   let templateVars = {
-    shortURL: req.params.shortURL,
+    shortURL: shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[req.cookies.user_ID]
   };
@@ -138,17 +139,27 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   let shortURL = req.params.shortURL;
-  delete urlDatabase[shortURL];
-  //console.log("test", shortURL);
-  res.redirect("/urls");
+  if (req.cookies.user_ID) {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect("/urls");
+  } else {
+    res.redirect("/login");
+  }
 });
 
-app.post("/urls/:shortURL/update", (req, res) => {
- //console.log(req.body.longURL);
- let shortURL = req.params.shortURL;
- urlDatabase[shortURL] = req.body.longURL;
- res.redirect(`/urls/${shortURL}`);
-})
+app.post("/urls/:id", (req, res) => {
+  let user_ID = req.cookies.user_ID
+  if (!user_ID) {
+    res.redirect("/login/");
+  }
+  else {
+    var userURLs = urlsForUser(user_ID);
+    if (userURLs[req.params.shortURL]) {
+      urlDatabase[req.params.id].longURL = req.body.longURL;
+    }
+    res.redirect("/urls");
+  }
+});
 
 app.post("/login", (req, res) => {
   for (userID in users) {
