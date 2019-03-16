@@ -32,6 +32,12 @@ const users = {
     id: "user2RandomID",
     email: "user2@example.com",
     password: "dishwasher-funk"
+  },
+
+  "test": {
+    id: "test",
+    email: "test@test.com",
+    password: "test"
   }
 }
 
@@ -41,6 +47,19 @@ function emailCheck(input){
     return true;
     }
   } return false;
+}
+
+function urlsForUser(id) {
+filteredURLS = {};
+  for (shortURL in urlDatabase) {
+    // console.log("line 55");
+    // console.log(id);
+    // console.log(urlDatabase[shortURL].userID);
+    if (urlDatabase[shortURL].userID === id) {
+      filteredURLS[shortURL] = urlDatabase[shortURL];
+    };
+  };
+   return filteredURLS;
 }
 
 app.get("/", (req, res) => {
@@ -64,9 +83,9 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     user: users[req.cookies.user_ID],
-    urls: urlDatabase,
-    user_id: req.cookies["user_id"] };
-  res.render('urls_index', templateVars);
+    urls: urlsForUser(req.cookies["user_id"]),
+  };
+  res.render("urls_index", templateVars);
 });
 
 //route for login form
@@ -93,7 +112,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[req.cookies.user_ID]
   };
   res.render("urls_show", templateVars);
@@ -110,8 +129,9 @@ app.post("/urls", (req, res) => {
   // console.log(req.body.longURL);  // Log the POST request body to the console
   const randomStr = generateRandomString();
   //console.log(req.body.longURL) ---> the url we entered
-  urlDatabase[randomStr] = { longURL: req.body.longURL, user_id: req.cookies.user_ID };
+  urlDatabase[randomStr] = { longURL: req.body.longURL, user_id: users[req.cookies.user_ID] };
   res.redirect(`/urls/${randomStr}`)
+  //console.log(urlDatabase);
   //console.log(urlDatabase); returns urlDatabase with added url
   //res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
@@ -184,3 +204,4 @@ app.listen(PORT, () => {
 function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 }
+
