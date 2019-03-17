@@ -2,14 +2,20 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 
 // before all routes because?
 app.use(bodyParser.urlencoded({extended: true}));
 
-// set up for cookieParser
-app.use(cookieParser());
+// set up for cookieSession
+app.use(cookieSession({
+  name: 'session',
+  keys: ['secrets'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
 
 // this tells express to use EJS as templating engine, needs app
 // declaration above
@@ -84,8 +90,8 @@ app.get("/hello", (req, res) => {
 // add route for /urls
 app.get("/urls", (req, res) => {
   let templateVars = {
-    user: users[req.cookies.user_ID],
-    urls: urlsForUser(req.cookies["user_ID"]),
+    user: users[req.session.user_ID],
+    urls: urlsForUser(req.session.user_ID),
   };
   res.render("urls_index", templateVars);
 });
@@ -94,16 +100,16 @@ app.get("/urls", (req, res) => {
 app.get("/login", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    user: users[req.cookies.user_ID]};
+    user: users[req.session.user_ID]};
   res.render("urls_login", templateVars);
 
 });
 
 // add a new route for /urls/new
 app.get("/urls/new", (req, res) => {
-  user = users[req.cookies.user_ID]
+  user = users[req.session.user_ID]
   let templateVars = { user: user };
-  if(users[req.cookies.user_ID]){
+  if(users[req.session.user_ID]){
     res.render("urls_new", templateVars);
   } else {
     res.redirect("/login");
@@ -116,7 +122,7 @@ app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL: shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
-    user: users[req.cookies.user_ID]
+    user: users[req.session.user_ID]
   };
   res.render("urls_show", templateVars);
 });
@@ -132,7 +138,7 @@ app.post("/urls", (req, res) => {
   // console.log(req.body.longURL);  // Log the POST request body to the console
   const randomStr = generateRandomString();
   //console.log(req.body.longURL) ---> the url we entered
-  urlDatabase[randomStr] = { longURL: req.body.longURL, user_ID: users[req.cookies.user_ID] };
+  urlDatabase[randomStr] = { longURL: req.body.longURL, user_ID: users[req.session.user_ID] };
   res.redirect(`/urls/${randomStr}`)
   //console.log(urlDatabase);
   //console.log(urlDatabase); returns urlDatabase with added url
@@ -141,7 +147,7 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   let shortURL = req.params.shortURL;
-  if (req.cookies.user_ID) {
+  if (req.session.user_ID) {
     delete urlDatabase[req.params.shortURL];
     res.redirect("/urls");
   } else {
@@ -150,7 +156,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-  let user_ID = req.cookies.user_ID
+  let user_ID = req.session.user_ID
   if (!user_ID) {
     res.redirect("/login/");
   }
@@ -175,7 +181,7 @@ app.post("/login", (req, res) => {
   } else if (hashVsPass === false){
     res.status(403).send("Invalid password.");
   } else {
-    res.cookie("user_ID", userEmail.id);
+    req.session.user_ID = userEmail.id;
     res.redirect("/urls");
   }
   // console.log(userEmail);
@@ -183,7 +189,7 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_ID");
+  req.session = null;
   res.redirect("urls");
 });
 
@@ -191,7 +197,7 @@ app.post("/logout", (req, res) => {
 app.get("/register", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    user: users[req.cookies.user_ID]}
+    user: users[req.session.user_ID]}
   res.render('urls_register', templateVars);
 });
 
@@ -210,7 +216,7 @@ app.post("/register", (req, res) => {
       email: req.body.email,
       password: hashedPassword
     };
-    res.cookie("user_ID", user_ID);
+    req.session.user_ID = user_ID;
     res.redirect("/urls");
   }
   //console.log(users)
