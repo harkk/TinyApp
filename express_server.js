@@ -131,8 +131,14 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.post("/urls", (req, res) => {
   const randomStr = generateRandomString();
-  urlDatabase[randomStr] = { longURL: req.body.longURL, user_ID: users[req.session.user_ID] };
-  res.redirect(`/urls/${randomStr}`)
+  if (req.body.longURL) {
+    urlDatabase[randomStr] = {longURL: "", userID: ""};
+    urlDatabase[randomStr].longURL = req.body.longURL;
+    urlDatabase[randomStr].userID = req.session.user_ID;
+    res.redirect(`/urls/${randomStr}`);
+  } else {
+    res.redirect("/urls/new")
+  }
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
