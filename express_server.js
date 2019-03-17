@@ -60,9 +60,6 @@ function emailCheck(email){
 function urlsForUser(id) {
 filteredURLS = {};
   for (shortURL in urlDatabase) {
-    // console.log("line 55");
-    // console.log(id);
-    // console.log(urlDatabase[shortURL].userID);
     if (urlDatabase[shortURL].userID === id) {
       filteredURLS[shortURL] = urlDatabase[shortURL];
     };
