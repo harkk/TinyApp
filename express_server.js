@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcrypt");
 
 // before all routes because?
 app.use(bodyParser.urlencoded({extended: true}));
@@ -83,7 +84,7 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     user: users[req.cookies.user_ID],
-    urls: urlsForUser(req.cookies["user_id"]),
+    urls: urlsForUser(req.cookies["user_ID"]),
   };
   res.render("urls_index", templateVars);
 });
@@ -130,7 +131,7 @@ app.post("/urls", (req, res) => {
   // console.log(req.body.longURL);  // Log the POST request body to the console
   const randomStr = generateRandomString();
   //console.log(req.body.longURL) ---> the url we entered
-  urlDatabase[randomStr] = { longURL: req.body.longURL, user_id: users[req.cookies.user_ID] };
+  urlDatabase[randomStr] = { longURL: req.body.longURL, user_ID: users[req.cookies.user_ID] };
   res.redirect(`/urls/${randomStr}`)
   //console.log(urlDatabase);
   //console.log(urlDatabase); returns urlDatabase with added url
@@ -184,27 +185,28 @@ app.post("/logout", (req, res) => {
 app.get("/register", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    user: users[req.cookies.user_id]}
+    user: users[req.cookies.user_ID]}
   res.render('urls_register', templateVars);
 });
 
 // post register info
 app.post("/register", (req, res) => {
-  const {email, password} = req.body;
-  if (email.length === 0 || password.length === 0 || emailCheck(email)) {
-    res.sendStatus(400);
+  const user_ID = generateRandomString();
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if (!email || !password || emailCheck(email)) {
+    res.status(400).send("Invalid email or password.")
   } else {
-    user_ID = generateRandomString()
     users[user_ID] = {
       id: user_ID,
-      email: email,
-      password: password
+      email: req.body.email,
+      password: req.body.password
     };
     res.cookie("user_ID", user_ID);
     res.redirect("/urls");
   }
-  // console.log(users) --- should show database of users with new user added to it. it does.
-})
+});
 
 
 app.listen(PORT, () => {
