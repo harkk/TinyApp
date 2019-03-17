@@ -30,7 +30,7 @@
         <td><%=urls[key].longURL %></td>
         <td><a href="/urls/<%= key %>">Edit</a>
         <td><form method="POST" class="inline-form"  action=<%=`/urls/${key}/delete`%>>
-        <button class="btn btn-danger">Delete</button>
+        <button class="btn btn-danger" style="margin:0.1em">Delete</button>
         </form></td>
       </tr>
     <% } %>

@@ -1,14 +1,14 @@
 <h1>TinyApp</h1>
 <% if (user){ %>
   <form class="form-inline" action="/logout" method="POST">
-    <div class="form-group mb-2">
+    <div class="btn-toolbar">
       <h5>Logged in as <%= user.email %></h5>
-      <button type="submit" class="btn btn-primary">Logout</button>
+      <button type="submit" class="btn btn-primary" style="margin:0.1em"">Logout</button>
     </div>
   </form>
 <% } else { %>
-    <div class="form-inline">
-      <a href='/register'><button type="submit" class="btn btn-primary">Register</button></a>
-      <a href='/login'><button type="submit" class="btn btn-primary">Login</button></a>
+    <div class="btn-toolbar">
+      <a href='/register'><button type="submit" class="btn btn-primary" style="margin:0.1em"">Register</button></a>
+      <a href='/login'><button type="submit" class="btn btn-primary" style="margin:0.1em">Login</button></a>
     </div>
 <% } %>
