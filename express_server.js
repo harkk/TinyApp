@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 
-// before all routes because?
+// set up for bodyParser
 app.use(bodyParser.urlencoded({extended: true}));
 
 // set up for cookieSession
@@ -17,11 +17,10 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
 
-// this tells express to use EJS as templating engine, needs app
-// declaration above
+// EJS is set as view engine
 app.set("view engine", "ejs");
 
-
+// Databases
 const urlDatabase = {
   "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "aj48lW" },
   "9sm5xK": { longURL:"http://www.google.com", userID: "aJ49jW" }
@@ -48,6 +47,7 @@ const users = {
   }
 }
 
+// Functions
 function emailCheck(email){
   for(let id in users){
     let user = users[id];
@@ -70,24 +70,24 @@ filteredURLS = {};
    return filteredURLS;
 }
 
+function generateRandomString() {
+  return Math.random().toString(36).substring(2, 8);
+}
+
+
+// Routes
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-
-// added below code as route if we go to http://localhost:8080/
-// urls.json it will resolve and give us the urlDatabase
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-// response now resolves this HTML when we go to
-// http://localhost:8080/hello
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-// add route for /urls
 app.get("/urls", (req, res) => {
   let templateVars = {
     user: users[req.session.user_ID],
@@ -96,7 +96,6 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-//route for login form
 app.get("/login", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
@@ -105,7 +104,6 @@ app.get("/login", (req, res) => {
 
 });
 
-// add a new route for /urls/new
 app.get("/urls/new", (req, res) => {
   user = users[req.session.user_ID]
   let templateVars = { user: user };
@@ -116,7 +114,6 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
-// add second route and template
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let templateVars = {
@@ -127,22 +124,15 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-// this will take any request to /u/:shortURL and redirect to longURL
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
 
-// add post route to receive form submission
 app.post("/urls", (req, res) => {
-  // console.log(req.body.longURL);  // Log the POST request body to the console
   const randomStr = generateRandomString();
-  //console.log(req.body.longURL) ---> the url we entered
   urlDatabase[randomStr] = { longURL: req.body.longURL, user_ID: users[req.session.user_ID] };
   res.redirect(`/urls/${randomStr}`)
-  //console.log(urlDatabase);
-  //console.log(urlDatabase); returns urlDatabase with added url
-  //res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
@@ -184,8 +174,6 @@ app.post("/login", (req, res) => {
     req.session.user_ID = userEmail.id;
     res.redirect("/urls");
   }
-  // console.log(userEmail);
-  // console.log(bcrypt.compareSync(userPasswordDB, userPass));
 });
 
 app.post("/logout", (req, res) => {
@@ -193,7 +181,6 @@ app.post("/logout", (req, res) => {
   res.redirect("urls");
 });
 
-// getting the register info
 app.get("/register", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
@@ -201,7 +188,6 @@ app.get("/register", (req, res) => {
   res.render('urls_register', templateVars);
 });
 
-// post register info
 app.post("/register", (req, res) => {
   const user_ID = generateRandomString();
   const email = req.body.email;
@@ -219,16 +205,8 @@ app.post("/register", (req, res) => {
     req.session.user_ID = user_ID;
     res.redirect("/urls");
   }
-  //console.log(users)
 });
-
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-// add generateRandomString() function
-function generateRandomString() {
-  return Math.random().toString(36).substring(2, 8);
-}
-
