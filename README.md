@@ -4,8 +4,9 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["screenshot description"](#)
-!["screenshot description"](#)
+!["The urls page for a user, listing their urls"](https://github.com/harkk/TinyApp/blob/master/docs/urls-page.png?raw=true)
+!["The update url page, where a user can update the url associated to a tiny url"](https://github.com/harkk/TinyApp/blob/master/docs/update-url-page.png?raw=true)
+!["The user registration page"](https://github.com/harkk/TinyApp/blob/master/docs/register-page.png?raw=true)
 
 ## Dependencies
 
