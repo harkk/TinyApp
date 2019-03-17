@@ -12,9 +12,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
   keys: ['secrets'],
-
-  // Cookie Options
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
 
 // EJS is set as view engine
@@ -22,8 +19,16 @@ app.set("view engine", "ejs");
 
 // Databases
 const urlDatabase = {
-  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "aj48lW" },
-  "9sm5xK": { longURL:"http://www.google.com", userID: "aJ49jW" }
+
+  "b2xVn2": {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "aj48lW"
+  },
+
+  "9sm5xK": {
+    longURL:"http://www.google.com",
+    userID: "aJ49jW"
+  }
 }
 
 const users = {
@@ -71,20 +76,12 @@ function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 }
 
-
 // Routes
-app.get("/", (req, res) => {
-  res.send("Hello!");
-})
-
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 })
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-})
-
+// page showing all urls
 app.get("/urls", (req, res) => {
   let templateVars = {
     user: users[req.session.user_ID],
@@ -93,14 +90,15 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 })
 
+// page for login
 app.get("/login", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
     user: users[req.session.user_ID]};
   res.render("urls_login", templateVars);
-
 })
 
+// create new url form
 app.get("/urls/new", (req, res) => {
   user = users[req.session.user_ID]
   let templateVars = { user: user };
@@ -111,6 +109,7 @@ app.get("/urls/new", (req, res) => {
   }
 })
 
+// route to page for each short url
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let templateVars = {
@@ -121,11 +120,13 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 })
 
+// redirect to url page
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 })
 
+// create short url
 app.post("/urls", (req, res) => {
   const randomStr = generateRandomString();
   if (req.body.longURL) {
@@ -138,6 +139,7 @@ app.post("/urls", (req, res) => {
   }
 })
 
+// delete url
 app.post("/urls/:shortURL/delete", (req, res) => {
   let shortURL = req.params.shortURL;
   if (req.session.user_ID) {
@@ -148,6 +150,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   }
 })
 
+// update the long url for a short url
 app.post("/urls/:id", (req, res) => {
   let user_ID = req.session.user_ID
   if (!user_ID) {
@@ -162,6 +165,7 @@ app.post("/urls/:id", (req, res) => {
   }
 })
 
+// login
 app.post("/login", (req, res) => {
   let email = req.body.email;
   let userEmail = emailCheck(email);
@@ -179,11 +183,13 @@ app.post("/login", (req, res) => {
   }
 })
 
+// logout
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("urls");
 })
 
+// page for user registration
 app.get("/register", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
@@ -191,6 +197,7 @@ app.get("/register", (req, res) => {
   res.render('urls_register', templateVars);
 })
 
+// submit user registration
 app.post("/register", (req, res) => {
   const user_ID = generateRandomString();
   const email = req.body.email;
