@@ -42,12 +42,13 @@ const users = {
   }
 }
 
-function emailCheck(input){
-  for(id in users){
-  if(users[id]['email'] === input){
-    return true;
+function emailCheck(email){
+  for(let id in users){
+    let user = users[id];
+    if (user.email === email) {
+      return user;
     }
-  } return false;
+  }
 }
 
 function urlsForUser(id) {
@@ -163,17 +164,18 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  for (userID in users) {
-    if (users[userID].email && users[userID].email == req.body.email) {
-      if (req.body.password == users[userID].password){
-      res.cookie('user_ID', userID);
-      } else {
-      res.status(403).redirect('/login');
-      }
-    }
-   }
-  res.redirect("/urls");
+  let email = req.body.email;
+  let userEmail = emailCheck(email);
+  let userPassword = req.body.password;
 
+  if (!userEmail) {
+    res.status(403).send("Email not found in database.");
+  } else if (userEmail && userPassword !== userEmail.password){
+    res.status(403).send("Invalid password.");
+  } else {
+    res.cookie("user_ID", userEmail.id);
+    res.redirect("/urls");
+  }
 });
 
 app.post("/logout", (req, res) => {
@@ -207,7 +209,7 @@ app.post("/register", (req, res) => {
     res.cookie("user_ID", user_ID);
     res.redirect("/urls");
   }
-  console.log(users)
+  //console.log(users)
 });
 
 
