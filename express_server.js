@@ -24,7 +24,7 @@ app.set("view engine", "ejs");
 const urlDatabase = {
   "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "aj48lW" },
   "9sm5xK": { longURL:"http://www.google.com", userID: "aJ49jW" }
-};
+}
 
 const users = {
 
@@ -75,15 +75,15 @@ function generateRandomString() {
 // Routes
 app.get("/", (req, res) => {
   res.send("Hello!");
-});
+})
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
-});
+})
 
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
+})
 
 app.get("/urls", (req, res) => {
   let templateVars = {
@@ -91,7 +91,7 @@ app.get("/urls", (req, res) => {
     urls: urlsForUser(req.session.user_ID),
   };
   res.render("urls_index", templateVars);
-});
+})
 
 app.get("/login", (req, res) => {
   let templateVars = {
@@ -99,7 +99,7 @@ app.get("/login", (req, res) => {
     user: users[req.session.user_ID]};
   res.render("urls_login", templateVars);
 
-});
+})
 
 app.get("/urls/new", (req, res) => {
   user = users[req.session.user_ID]
@@ -109,7 +109,7 @@ app.get("/urls/new", (req, res) => {
   } else {
     res.redirect("/login");
   }
-});
+})
 
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
@@ -119,12 +119,12 @@ app.get("/urls/:shortURL", (req, res) => {
     user: users[req.session.user_ID]
   };
   res.render("urls_show", templateVars);
-});
+})
 
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
-});
+})
 
 app.post("/urls", (req, res) => {
   const randomStr = generateRandomString();
@@ -136,7 +136,7 @@ app.post("/urls", (req, res) => {
   } else {
     res.redirect("/urls/new")
   }
-});
+})
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   let shortURL = req.params.shortURL;
@@ -146,7 +146,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   } else {
     res.redirect("/login");
   }
-});
+})
 
 app.post("/urls/:id", (req, res) => {
   let user_ID = req.session.user_ID
@@ -160,7 +160,7 @@ app.post("/urls/:id", (req, res) => {
     }
     res.redirect("/urls");
   }
-});
+})
 
 app.post("/login", (req, res) => {
   let email = req.body.email;
@@ -177,19 +177,19 @@ app.post("/login", (req, res) => {
     req.session.user_ID = userEmail.id;
     res.redirect("/urls");
   }
-});
+})
 
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("urls");
-});
+})
 
 app.get("/register", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
     user: users[req.session.user_ID]}
   res.render('urls_register', templateVars);
-});
+})
 
 app.post("/register", (req, res) => {
   const user_ID = generateRandomString();
@@ -208,8 +208,8 @@ app.post("/register", (req, res) => {
     req.session.user_ID = user_ID;
     res.redirect("/urls");
   }
-});
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
-});
+})
