@@ -166,16 +166,20 @@ app.post("/urls/:id", (req, res) => {
 app.post("/login", (req, res) => {
   let email = req.body.email;
   let userEmail = emailCheck(email);
-  let userPassword = req.body.password;
+  let userPass = userEmail.password;
+  let userPasswordDB = req.body.password;
+  let hashVsPass = bcrypt.compareSync(userPasswordDB, userPass)
 
   if (!userEmail) {
     res.status(403).send("Email not found in database.");
-  } else if (userEmail && userPassword !== userEmail.password){
+  } else if (hashVsPass === false){
     res.status(403).send("Invalid password.");
   } else {
     res.cookie("user_ID", userEmail.id);
     res.redirect("/urls");
   }
+  // console.log(userEmail);
+  // console.log(bcrypt.compareSync(userPasswordDB, userPass));
 });
 
 app.post("/logout", (req, res) => {
@@ -196,7 +200,7 @@ app.post("/register", (req, res) => {
   const user_ID = generateRandomString();
   const email = req.body.email;
   const password = req.body.password;
-  const hashPassword = bcrypt.hashSync(password, 10);
+  const hashedPassword = bcrypt.hashSync(password, 10);
 
   if (!email || !password || emailCheck(email)) {
     res.status(400).send("Invalid email or password.")
@@ -204,7 +208,7 @@ app.post("/register", (req, res) => {
     users[user_ID] = {
       id: user_ID,
       email: req.body.email,
-      password: hashPassword
+      password: hashedPassword
     };
     res.cookie("user_ID", user_ID);
     res.redirect("/urls");
