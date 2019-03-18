@@ -161,19 +161,13 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 })
 
 // update the long url for a short url
-app.post("/urls/:id", (req, res) => {
-  let user_ID = req.session.user_ID
-  if (!user_ID) {
-    res.redirect("/login/");
-  }
-  else {
-    var userURLs = urlsForUser(user_ID);
-    if (userURLs[req.params.shortURL]) {
-      urlDatabase[req.params.id].longURL = req.body.longURL;
-    }
+app.post("/urls/:shortURL", (req, res) => {
+  const shortURL = req.params.shortURL;
+  if (users[req.session.user_ID]) {
+    urlDatabase[shortURL].longURL = req.body.longURL;
     res.redirect("/urls");
   }
-})
+});
 
 // login
 app.post("/login", (req, res) => {
