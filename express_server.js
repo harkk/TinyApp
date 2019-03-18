@@ -77,6 +77,10 @@ function generateRandomString() {
 }
 
 // Routes
+app.get("/", (req, res) => {
+  res.redirect("/login");
+});
+
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 })
@@ -112,19 +116,22 @@ app.get("/urls/new", (req, res) => {
 // route to page for each short url
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
-  let templateVars = {
-    shortURL: shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
-    user: users[req.session.user_ID]
-  };
-  res.render("urls_show", templateVars);
-})
+  if (!users[req.session.user_ID]) {
+    res.status(403).send("Please login!");
+  } else if (urlDatabase[shortURL].userID === users[req.session.user_ID].id) {
+    let templateVars = {
+      user: req.session.user_ID,
+      shortURL: shortURL,
+      longURL: urlDatabase[shortURL].longURL
+    };
+    res.render("urls_show", templateVars);
+  } else {
+    res.status(403).send("You do not have access to this url")
+  }
+});
 
 // redirect to url page
-app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
-})
+
 
 // create short url
 app.post("/urls", (req, res) => {
