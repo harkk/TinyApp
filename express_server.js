@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
   keys: ['secrets'],
-}))
+}));
 
 // EJS is set as view engine
 app.set("view engine", "ejs");
@@ -29,7 +29,7 @@ const urlDatabase = {
     longURL:"http://www.google.com",
     userID: "aJ49jW"
   }
-}
+};
 
 const users = {
 
@@ -50,7 +50,7 @@ const users = {
     email: "test@test.com",
     password: "test"
   }
-}
+};
 
 // Functions
 function emailCheck(email){
@@ -58,9 +58,9 @@ function emailCheck(email){
     let user = users[id];
     if (user.email === email) {
       return user;
-    }
-  }
-}
+    };
+  };
+};
 
 function urlsForUser(id) {
 filteredURLS = {};
@@ -70,11 +70,11 @@ filteredURLS = {};
     };
   };
    return filteredURLS;
-}
+};
 
 function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
-}
+};
 
 // Routes
 app.get("/", (req, res) => {
@@ -83,7 +83,7 @@ app.get("/", (req, res) => {
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
-})
+});
 
 // page showing all urls
 app.get("/urls", (req, res) => {
@@ -92,7 +92,7 @@ app.get("/urls", (req, res) => {
     urls: urlsForUser(req.session.user_ID),
   };
   res.render("urls_index", templateVars);
-})
+});
 
 // page for login
 app.get("/login", (req, res) => {
@@ -100,7 +100,7 @@ app.get("/login", (req, res) => {
     urls: urlDatabase,
     user: users[req.session.user_ID]};
   res.render("urls_login", templateVars);
-})
+});
 
 // create new url form
 app.get("/urls/new", (req, res) => {
@@ -110,8 +110,8 @@ app.get("/urls/new", (req, res) => {
     res.render("urls_new", templateVars);
   } else {
     res.redirect("/login");
-  }
-})
+  };
+});
 
 // route to page for each short url
 app.get("/urls/:shortURL", (req, res) => {
@@ -127,14 +127,14 @@ app.get("/urls/:shortURL", (req, res) => {
     res.render("urls_show", templateVars);
   } else {
     res.status(403).send("You do not have access to this url")
-  }
+  };
 });
 
 // redirect to url page
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(urlDatabase[req.params.shortURL].longURL);
-})
+});
 
 // create short url
 app.post("/urls", (req, res) => {
@@ -146,8 +146,8 @@ app.post("/urls", (req, res) => {
     res.redirect(`/urls/${randomStr}`);
   } else {
     res.redirect("/urls/new")
-  }
-})
+  };
+});
 
 // delete url
 app.post("/urls/:shortURL/delete", (req, res) => {
@@ -157,8 +157,8 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     res.redirect("/urls");
   } else {
     res.redirect("/login");
-  }
-})
+  };
+});
 
 // update the long url for a short url
 app.post("/urls/:shortURL", (req, res) => {
@@ -166,7 +166,7 @@ app.post("/urls/:shortURL", (req, res) => {
   if (users[req.session.user_ID]) {
     urlDatabase[shortURL].longURL = req.body.longURL;
     res.redirect("/urls");
-  }
+  };
 });
 
 // login
@@ -175,7 +175,7 @@ app.post("/login", (req, res) => {
   let userEmail = emailCheck(email);
   let userPass = userEmail.password;
   let userPasswordDB = req.body.password;
-  let hashVsPass = bcrypt.compareSync(userPasswordDB, userPass)
+  let hashVsPass = bcrypt.compareSync(userPasswordDB, userPass);
 
   if (!userEmail) {
     res.status(403).send("Email not found in database.");
@@ -184,22 +184,23 @@ app.post("/login", (req, res) => {
   } else {
     req.session.user_ID = userEmail.id;
     res.redirect("/urls");
-  }
-})
+  };
+});
 
 // logout
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("urls");
-})
+});
 
 // page for user registration
 app.get("/register", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    user: users[req.session.user_ID]}
+    user: users[req.session.user_ID]
+  };
   res.render('urls_register', templateVars);
-})
+});
 
 // submit user registration
 app.post("/register", (req, res) => {
@@ -209,7 +210,7 @@ app.post("/register", (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   if (!email || !password || emailCheck(email)) {
-    res.status(400).send("Invalid email or password.")
+    res.status(400).send("Invalid email or password.");
   } else {
     users[user_ID] = {
       id: user_ID,
@@ -218,10 +219,10 @@ app.post("/register", (req, res) => {
     };
     req.session.user_ID = user_ID;
     res.redirect("/urls");
-  }
-})
+  };
+});
 
 // triggers PORT to listen
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
-})
+});
