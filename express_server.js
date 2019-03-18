@@ -120,7 +120,7 @@ app.get("/urls/:shortURL", (req, res) => {
     res.status(403).send("Please login!");
   } else if (urlDatabase[shortURL].userID === users[req.session.user_ID].id) {
     let templateVars = {
-      user: req.session.user_ID,
+      user: users[req.session.user_ID],
       shortURL: shortURL,
       longURL: urlDatabase[shortURL].longURL
     };
@@ -131,7 +131,10 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 // redirect to url page
-
+app.get("/u/:shortURL", (req, res) => {
+  let longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
+})
 
 // create short url
 app.post("/urls", (req, res) => {
